@@ -44,23 +44,29 @@ def _create_object_directory(directory, metadata):
     if typename not in valid_types:
         raise ValueError("{typename} is not a valid typename".format(typename=typename))
     directory.mkdir()
-    meta_filename = directory / META_FILENAME
+    meta_filename = directory / serialize.META_FILENAME
     with meta_filename.open("w", encoding="utf-8") as meta_file:
-        if metadata == _default_metadata(typename):
-            # if it is the default, we know how to print it fast
-            metadata_string = (''
-                '{exdir_meta}:\n'
-                '   {type_meta}: "{typename}"\n'
-                '   {version_meta}: {version}\n'
-            '').format(
-                exdir_meta=EXDIR_METANAME,
-                type_meta=TYPE_METANAME,
-                typename=typename,
-                version_meta=VERSION_METANAME,
-                version=1
-            )
-        else:
-            metadata_string = serialize.dump(metadata)
+        
+        # TODO: this fast serialization is disabled for now to allow, 
+        #       can be reimplemented in `../utils/serialize.py`
+
+        metadata_string = serialize.dumps(metadata)
+
+        # if metadata == _default_metadata(typename):
+        #     # if it is the default, we know how to print it fast
+        #     metadata_string = (''
+        #         '{exdir_meta}:\n'
+        #         '   {type_meta}: "{typename}"\n'
+        #         '   {version_meta}: {version}\n'
+        #     '').format(
+        #         exdir_meta=EXDIR_METANAME,
+        #         type_meta=TYPE_METANAME,
+        #         typename=typename,
+        #         version_meta=VERSION_METANAME,
+        #         version=1
+        #     )
+        # else:
+
 
         try:
             meta_file.write(metadata_string)
@@ -97,7 +103,7 @@ def is_exdir_object(directory):
 
 
 def is_nonraw_object_directory(directory):
-    meta_filename = directory / META_FILENAME
+    meta_filename = directory / serialize.META_FILENAME
     if not meta_filename.exists():
         return False
     with meta_filename.open("r", encoding="utf-8") as meta_file:
@@ -136,7 +142,7 @@ def root_directory(path):
             path = path.parent
             continue
 
-        meta_filename = path / META_FILENAME
+        meta_filename = path / serialize.META_FILENAME
         with meta_filename.open("r", encoding="utf-8") as meta_file:
             meta_data = serialize.load(meta_file)
         if EXDIR_METANAME not in meta_data:
@@ -224,11 +230,11 @@ class Object(object):
 
     @property # TODO consider warning if file is closed,
     def attributes_filename(self):
-        return self.directory / ATTRIBUTES_FILENAME
+        return self.directory / serialize.ATTRIBUTES_FILENAME
 
     @property # TODO consider warning if file is closed
     def meta_filename(self):
-        return self.directory / META_FILENAME
+        return self.directory / serialize.META_FILENAME
 
     def create_raw(self, name):
         from .raw import Raw

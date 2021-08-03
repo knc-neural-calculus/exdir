@@ -9,21 +9,26 @@ from ..core import constants
 # HACK: this global variable can be changed when calling the serializer. Messy, but works
 MODE : Literal['yaml', 'json'] = 'yaml'
 
-AVAILIBLE_MODES : Dict[Literal['yaml', 'json'], Optional[bool]] = {
-    'json': True, # json is in the standard library
-    'yaml': None, 
+AVAILIBLE_MODES : Set[Literal['yaml', 'json']] = {
+    'json', # json is in the standard library
+    # 'yaml': None, # yaml is not in the standard library
 }
+
+META_FILENAME : str = "exdir.dat"
+ATTRIBUTES_FILENAME : str = "attributes.dat"
+
 
 # import packages
 try:
     import ruamel_yaml as yaml
-    AVAILIBLE_MODES['yaml'] = True
+    AVAILIBLE_MODES.add('yaml')
 except (ImportError,ModuleNotFoundError) as e:
     try:
         import ruamel.yaml as yaml
-        AVAILIBLE_MODES['yaml'] = True
+        AVAILIBLE_MODES.add('yaml')
     except (ImportError,ModuleNotFoundError) as e:
-        AVAILIBLE_MODES['yaml'] = False
+        # TODO: maybe allow usage of pyyaml as fallback?
+        pass
 
 
 # provide functions
@@ -35,8 +40,11 @@ DoubleQuotedScalarString : Optional[Callable] = None
 # refresh things according to `MODE`
 def refresh():
     # modify filename constants
-    constants.META_FILENAME = f"exdir.{MODE}"
-    constants.ATTRIBUTES_FILENAME = f"attributes.{MODE}"
+    global META_FILENAME
+    global ATTRIBUTES_FILENAME
+
+    META_FILENAME = f"exdir.{MODE}"
+    ATTRIBUTES_FILENAME = f"attributes.{MODE}"
 
     # global functions
     global load

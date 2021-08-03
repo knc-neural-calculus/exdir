@@ -393,7 +393,7 @@ class Group(Object):
                 "' is not a valid exdir object."
             )
 
-        meta_filename = directory / exob.META_FILENAME
+        meta_filename = directory / serialize.META_FILENAME
         with meta_filename.open("r", encoding="utf-8") as meta_file:
             meta_data = serialize.load(meta_file)
         if meta_data[exob.EXDIR_METANAME][exob.TYPE_METANAME] == exob.DATASET_TYPENAME:

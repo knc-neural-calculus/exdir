@@ -8,6 +8,7 @@ except ImportError as e:
     except ImportError:
         raise e
 from . import constants as exob
+from ..utils import serialize
 
 VALID_CHARACTERS = ("abcdefghijklmnopqrstuvwxyz1234567890_-.")
 
@@ -48,8 +49,8 @@ def _assert_nonreserved(name):
         name_str = name.encode('utf8')
 
     reserved_names = [
-        exob.META_FILENAME,
-        exob.ATTRIBUTES_FILENAME,
+        serialize.META_FILENAME,
+        serialize.ATTRIBUTES_FILENAME,
         exob.RAW_FOLDER_NAME
     ]
 
