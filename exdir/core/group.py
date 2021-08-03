@@ -10,10 +10,6 @@ except ImportError as e:
 import numpy as np
 import exdir
 try:
-    import ruamel_yaml as yaml
-except ImportError:
-    import ruamel.yaml as yaml
-try:
     from collections import abc
 except ImportError:
     import collections as abc
@@ -24,6 +20,7 @@ from . import exdir_object as exob
 from . import dataset as ds
 from . import raw
 from .. import utils
+from ..utils import serialize
 
 def _data_to_shape_and_dtype(data, shape, dtype):
     if data is not None:
@@ -398,7 +395,7 @@ class Group(Object):
 
         meta_filename = directory / exob.META_FILENAME
         with meta_filename.open("r", encoding="utf-8") as meta_file:
-            meta_data = yaml.safe_load(meta_file)
+            meta_data = serialize.load(meta_file)
         if meta_data[exob.EXDIR_METANAME][exob.TYPE_METANAME] == exob.DATASET_TYPENAME:
             return self._dataset(name)
         elif meta_data[exob.EXDIR_METANAME][exob.TYPE_METANAME] == exob.GROUP_TYPENAME:

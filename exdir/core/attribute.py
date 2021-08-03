@@ -2,16 +2,13 @@ from enum import Enum
 import os
 import numpy as np
 import exdir
-try:
-    import ruamel_yaml as yaml
-except ImportError:
-    import ruamel.yaml as yaml
 
+from ..utils import serialize
 from .mode import assert_file_open, OpenMode, assert_file_writable
 
 def _quote_strings(value):
     if isinstance(value, str):
-        return yaml.scalarstring.DoubleQuotedScalarString(value)
+        return serialize.DoubleQuotedScalarString(value)
     else:
         try:
             new_result = {}
@@ -166,12 +163,9 @@ class Attribute(object):
             attribute_data_quoted = attrs
 
         with self.filename.open("w", encoding="utf-8") as attribute_file:
-            yaml.dump(
+            serialize.dump(
                 attribute_data_quoted,
                 attribute_file,
-                default_flow_style=False,
-                allow_unicode=True,
-                Dumper=yaml.RoundTripDumper
             )
 
     # TODO only needs filename, make into free function
@@ -180,7 +174,7 @@ class Attribute(object):
         attrs = {}
         if self.filename.exists():  # NOTE str for Python 3.5 support
             with self.filename.open("r", encoding="utf-8") as meta_file:
-                attrs = yaml.safe_load(meta_file)
+                attrs = serialize.load(meta_file)
         return attrs
 
     def __iter__(self):

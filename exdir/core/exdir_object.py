@@ -13,10 +13,7 @@ except ImportError as e:
         import pathlib2 as pathlib
     except ImportError:
         raise e
-try:
-    import ruamel_yaml as yaml
-except ImportError:
-    import ruamel.yaml as yaml
+
 
 import exdir
 
@@ -24,6 +21,7 @@ from .. import utils
 from .attribute import Attribute
 from .constants import *
 from .mode import assert_file_open, OpenMode
+from ..utils import serialize
 
 def _resolve_path(path):
     return pathlib.Path(path).resolve()
@@ -62,7 +60,7 @@ def _create_object_directory(directory, metadata):
                 version=1
             )
         else:
-            metadata_string = yaml.dump(metadata)
+            metadata_string = serialize.dump(metadata)
 
         try:
             meta_file.write(metadata_string)
@@ -103,7 +101,7 @@ def is_nonraw_object_directory(directory):
     if not meta_filename.exists():
         return False
     with meta_filename.open("r", encoding="utf-8") as meta_file:
-        meta_data = yaml.safe_load(meta_file)
+        meta_data = serialize.load(meta_file)
 
         if not isinstance(meta_data, dict):
             return False
@@ -140,7 +138,7 @@ def root_directory(path):
 
         meta_filename = path / META_FILENAME
         with meta_filename.open("r", encoding="utf-8") as meta_file:
-            meta_data = yaml.safe_load(meta_file)
+            meta_data = serialize.load(meta_file)
         if EXDIR_METANAME not in meta_data:
             path = path.parent
             continue
