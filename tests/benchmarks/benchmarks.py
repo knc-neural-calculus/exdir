@@ -6,6 +6,9 @@ import time
 import numpy as np
 import h5py
 
+# TEMPDIR = "/tmp/ramdisk/"
+TEMPDIR = "temp/"
+
 one_hundred_attributes = {}
 for i in range(200):
     one_hundred_attributes["hello" + str(i)] = "world"
@@ -20,7 +23,7 @@ def benchmark(name, target, setup=None, teardown=None, iterations=1):
         if setup is not None:
             data = setup()
         start_time = time.time()
-        target(*data)
+        target(data[0])
         end_time = time.time()
         total_time += end_time - start_time
         if teardown is not None:
@@ -47,7 +50,7 @@ def benchmark(name, target, setup=None, teardown=None, iterations=1):
 
 
 def setup_exdir():
-    testpath = "/tmp/ramdisk/test.exdir"
+    testpath = f"{TEMPDIR}test.exdir"
     # testpath = tmpdir / "test.exdir"
     if os.path.exists(testpath):
         shutil.rmtree(testpath)
@@ -56,7 +59,7 @@ def setup_exdir():
 
 
 def setup_h5py():
-    testpath = "/tmp/ramdisk/test.h5"
+    testpath = f"{TEMPDIR}test.h5"
     # testpath = tmpdir / "test.h5"
     if os.path.exists(testpath):
         os.remove(testpath)
@@ -161,11 +164,11 @@ def create_large_tree(obj, level=0):
         create_large_tree(group, level + 1)
 
 
-if not os.path.exists("/tmp/ramdisk"):
-    print("Error: You need to set up a ramdisk at /tmp/ramdisk first:")
+if not os.path.exists(f"{TEMPDIR}"):
+    print(f"Error: You need to set up a ramdisk at {TEMPDIR} first:")
     print()
-    print("    mkdir /tmp/ramdisk/")
-    print("    sudo mount -t tmpfs -o size=2048M tmpfs /tmp/ramdisk/")
+    print(f"    mkdir {TEMPDIR}")
+    print(f"    sudo mount -t tmpfs -o size=2048M tmpfs {TEMPDIR}")
     print()
     print("Rerun this script after setting up the ramdisk.")
 

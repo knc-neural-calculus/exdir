@@ -60,6 +60,9 @@ instance/
 # Scrapy stuff:
 .scrapy
 
+# benchmarking stuff
+tests/benchmarks/temp/**
+
 # Sphinx documentation
 docs/_build/
 

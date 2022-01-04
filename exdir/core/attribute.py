@@ -174,6 +174,7 @@ class Attribute(object):
         attrs = {}
         if self.filename.exists():  # NOTE str for Python 3.5 support
             with self.filename.open("r", encoding="utf-8") as meta_file:
+                # raise Exception(f'some data: {self.file} {self.filename} \n {meta_file.read()}')
                 attrs = serialize.load(meta_file)
         return attrs
 
